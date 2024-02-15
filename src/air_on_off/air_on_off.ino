@@ -127,6 +127,7 @@ void loop() {
   play();
 
   muscleLO.set(EXHAUST, 500);
+  muscleUO.set(EXHAUST, 500);
   play();
   //while(true) {}
 }
