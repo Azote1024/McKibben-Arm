@@ -7,7 +7,7 @@
 #define EXHAUST 0
 
 // 一ループの動作にかけるミリ秒
-#define FRAME 5000
+#define FRAME 1000
 
 #define DEBUG_MODE 1
 
@@ -114,15 +114,19 @@ void setup() {
   Serial.begin(115200);
 }
 void loop() {
-  muscleUI.set(INTAKE, 2000); // 吸入方向に20ms間開く
-  muscleUO.set(INTAKE, 3000); // 排気方向に30ms間開く
-  play(); // driveメソッドの後にplay関数を実行
+  muscleUI.set(INTAKE, 500);
+  muscleLI.set(INTAKE, 500); 
+  play(); 
 
-  muscleUO.set(EXHAUST, 1000);
+  muscleUI.set(EXHAUST, 500);
+  muscleUO.set(INTAKE, 500);
   play();
 
-  muscleUI.set(EXHAUST, 2000);
+  muscleLI.set(EXHAUST, 500);
+  muscleLO.set(INTAKE, 500);
   play();
 
-  while(true) {}
+  muscleLO.set(EXHAUST, 500);
+  play();
+  //while(true) {}
 }
