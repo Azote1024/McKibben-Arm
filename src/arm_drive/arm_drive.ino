@@ -166,13 +166,9 @@ void *sort (int t[4][2]) {
 //実行時間は最も長い吸気/排気命令の長さに依存する
 double movehand(int x, int y) {
 
-
   //(x, y)から目標アーム角(theta1, theta2)を算出
   double theta1 = IK_theta1(x, y);
   double theta2 = IK_theta2(x, y);
-
-//  Serial.println(degrees(theta1));
-//  Serial.println(degrees(theta2));
 
   //(theta1, theta2)から目標筋長L_UI, L_UO, L_LI, L_LOを算出
   double L_UI = length_UI(theta1);
@@ -222,12 +218,6 @@ double movehand(int x, int y) {
   //時間スパンと電磁弁idをソートして短い順に並べ直す
   sort(t);
 
-  //Serial.println(t[0][0]);
-  //Serial.println(t[1][0]);
-  //Serial.println(t[2][0]);
-  //Serial.println(t[3][0]);
-  
-
   //対象電磁弁を開閉
   PORTD = ((t[0][1] | t[1][1] | t[2][1] | t[3][1]) & B11111100) | (PORTD & B00000011);
   PORTB = ((t[0][1] | t[1][1] | t[2][1] | t[3][1]) & B00000011) | (PORTB & B11111100);
@@ -248,6 +238,12 @@ double movehand(int x, int y) {
   PORTD = (PORTD & B00000011);
   PORTB = (PORTB & B11111100);
   //Serial.println(PORTB, BIN);
+
+
+  /*
+   * ここでtheta1とtheta2とのエラー分を計算
+   * 必要そうなら給排気を行って精度を高める
+   */
 }
 
 void loop() {
@@ -257,13 +253,13 @@ void loop() {
 //  } while (1);
 
   movehand(320, 320);
-  delay(500);
+  delay(10000);
   movehand(290, 320);
-  delay(500);
+  delay(10000);
   movehand(290, 290);
-  delay(500);
+  delay(10000);
   movehand(320, 290);
-  delay(500);
+  delay(10000);
 
 
   //while(true);
