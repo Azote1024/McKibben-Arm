@@ -112,22 +112,37 @@ void play() {
 
 void setup() {
   Serial.begin(115200);
+
+  pinMode(A5, INPUT);
 }
+
+char buf[20];
 void loop() {
-  muscleUI.set(INTAKE, 500);
-  muscleLI.set(INTAKE, 500); 
-  play(); 
-
-  muscleUI.set(EXHAUST, 500);
-  muscleUO.set(INTAKE, 500);
-  play();
-
-  muscleLI.set(EXHAUST, 500);
-  muscleLO.set(INTAKE, 500);
-  play();
-
-  muscleLO.set(EXHAUST, 500);
-  muscleUO.set(EXHAUST, 500);
-  play();
+  
+//  muscleUI.set(INTAKE, 500);
+//  muscleLI.set(INTAKE, 500); 
+//  play(); 
+//
+//  muscleUI.set(EXHAUST, 500);
+//  muscleUO.set(INTAKE, 500);
+//  play();
+//
+//  muscleLI.set(EXHAUST, 500);
+//  muscleLO.set(INTAKE, 500);
+//  play();
+//
+//  muscleLO.set(EXHAUST, 500);
+//  muscleUO.set(EXHAUST, 500);
+//  play();
+  digitalWrite(6, HIGH);
+  digitalWrite(7, HIGH);
+  delay(250);
+  sprintf(buf, "pressure: %4d", analogRead(A5));
+  delay(250);
+  digitalWrite(6, LOW);
+  digitalWrite(7, LOW);
+  sprintf(buf, "pressure: %4d", analogRead(A5));
+  Serial.println(buf);
+  delay(1000);
   //while(true) {}
 }
