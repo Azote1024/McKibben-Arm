@@ -31,16 +31,14 @@ unsigned long stopwatch = 0;
 int opentime = 0;
 
 
+const int ms = 1000;
+
 void loop() {
   stopwatch = millis();
   
   pressure = analogRead(A5);
 
-  if (millis() > (startmillis + 1000UL)) {
-    if (target == 600) target = 700;
-    else target = 600;
-    startmillis = millis();
-  }
+  target = 700 + 100*sin((millis() * 2UL * PI)/30);
 
   Serial.print(pressure);
   Serial.print(",");
@@ -49,7 +47,6 @@ void loop() {
   if (pressure > target) {
     digitalWrite(8, 1);
     digitalWrite(9, 0);
-    
   } 
   else if (pressure < target){
     digitalWrite(8, 0);
