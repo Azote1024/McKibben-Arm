@@ -36,13 +36,12 @@ const int ms = 1000;
 void loop() {
   stopwatch = millis();
   
-  pressure = analogRead(A5);
+  pressure = map(constrain(analogRead(A5),   513, 779),   513, 779, 0, 500);
 
-  target = 700 + 100*sin((millis() * 2UL * PI)/30);
+  target = 250 + 250*sin((millis() * 2UL * PI)/4000);
 
-  Serial.print(pressure);
-  Serial.print(",");
-  Serial.println(target);
+  Serial.println(pressure);
+
   
   if (pressure > target) {
     digitalWrite(8, 1);
@@ -54,11 +53,11 @@ void loop() {
     
   }
 
-  opentime = constrain(abs(target - pressure)*0.2, 0, 29);
+  opentime = constrain(abs(target - pressure)*0.2, 0, 30);
   delay(opentime);
   
   digitalWrite(8, 0);
   digitalWrite(9, 0);
 
-  delay((stopwatch + 30) - millis());
+  if (opentime < 30) delay((stopwatch + 30) - millis());
 }

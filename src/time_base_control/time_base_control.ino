@@ -10,17 +10,15 @@ unsigned long startmillis = 0;
 #define LONG 1
 #define SHORT 0
 
-#define INNER_ARM_LENGTH 230
-#define OUTER_ARM_LENGTH 225
 
-double p_max = 410.0;
-double p_min = 50.0;
+//本来はここには供給圧力（タンク圧力）を入れる（今はセンシングしていないのでだめだが）
+double p_max = 500.0;
+double p_min = 0.0;
 
-double l_target = 0;
-double l_now = 0;
 
-double tau_p_long = 60.0;
-double tau_n_long = 60.0;
+//時定数
+double tau_p_long = 47.0;
+double tau_n_long = 42.0;
 
 double tau_p_short = 60.0;
 double tau_n_short = 60.0;
@@ -61,19 +59,33 @@ void setup() {
 int openspan = 0;
 double setPressure(int p_target) {
 
-  int p_now = map(constrain(analogRead(A4),   0, 234),   0, 234, 50, 400);
+  int p_now = map(constrain(analogRead(A5),   513, 779),   513, 779, 0, 500);
+  Serial.print(p_target);
+  Serial.print(",");
+  Serial.println(p_now);
   
   if(p_now < p_target) {
     //吸気
     openspan = phase_p(p_target, LONG) - phase_p(p_now, LONG);
+    openspan *= 0.1;
+    digitalWrite(9, HIGH);
+    delay(openspan);
+    digitalWrite(9, LOW);
     
   } else {
     //排気
     openspan = phase_n(p_target, LONG) - phase_n(p_now, LONG);
-    
+    openspan *= 0.1;
+    digitalWrite(8, HIGH);
+    delay(openspan);
+    digitalWrite(8, LOW);
   }
 }
 
 void loop() {
-  setPressure(100);
+
+  int target = 250 + 250*sin((millis() * 2UL * PI)/4000);
+  
+  setPressure(target);
+  delay(30);
 }

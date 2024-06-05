@@ -83,9 +83,9 @@ void loop() {
     double t_1 = phase_p(length2pressure(l_target, BIG));
     double t_0 = phase_p(p_now);
     open_span = (int)(t_1 - t_0);
-    PORTD = B01000000 | (PORTD & B00000011);
+    PORTB = B01000000 | (PORTD & B11111100);
     delay(open_span);
-    PORTD = B00000000 | (PORTD & B00000011);
+    PORTB = B00000000 | (PORTD & B11111100);
 
     //安定するまで待つ
     delay(200);
@@ -93,9 +93,9 @@ void loop() {
     double t_1 = phase_n(length2pressure(l_target, BIG));
     double t_0 = phase_n(p_now);
     open_span = (int)(t_1 - t_0);
-    PORTD = B10000000 | (PORTD & B00000011);
+    PORTB = B10000000 | (PORTD & B11111100);
     delay(open_span);
-    PORTD = B00000000 | (PORTD & B00000011);
+    PORTB = B00000000 | (PORTD & B11111100);
     
     //安定するまで待つ
     delay(200);
