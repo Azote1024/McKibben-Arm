@@ -67,7 +67,7 @@ double setPressure(int p_target) {
   if(p_now < p_target) {
     //吸気
     openspan = phase_p(p_target, LONG) - phase_p(p_now, LONG);
-    openspan *= 0.1;
+    //openspan *= 0.1;
     digitalWrite(9, HIGH);
     delay(openspan);
     digitalWrite(9, LOW);
@@ -75,17 +75,31 @@ double setPressure(int p_target) {
   } else {
     //排気
     openspan = phase_n(p_target, LONG) - phase_n(p_now, LONG);
-    openspan *= 0.1;
+    //openspan *= 0.1;
     digitalWrite(8, HIGH);
     delay(openspan);
     digitalWrite(8, LOW);
   }
 }
 
+unsigned long stopwatch = millis();
+int target = 0;
 void loop() {
 
-  int target = 250 + 250*sin((millis() * 2UL * PI)/4000);
+  //sinカーブ
+  target = 250 + 250*sin((millis() * 2UL * PI)/500);
+
+  //ステップ
+//  if (millis() - stopwatch > 1000) {
+//    stopwatch = millis();
+//    if (target == 400) {
+//      target = 100;
+//    } else {
+//      target = 400;
+//    }
+//  }
+  
   
   setPressure(target);
-  delay(30);
+  //delay(10);
 }
