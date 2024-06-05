@@ -38,7 +38,7 @@ void loop() {
   
   pressure = map(constrain(analogRead(A5),   513, 779),   513, 779, 0, 500);
 
-  target = 250 + 250*sin((millis() * 2UL * PI)/4000);
+  target = 250 + 250*sin((millis() * 2UL * PI)/2000);
 
   Serial.println(pressure);
 

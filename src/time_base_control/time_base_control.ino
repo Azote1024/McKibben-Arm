@@ -87,7 +87,7 @@ int target = 0;
 void loop() {
 
   //sinカーブ
-  target = 250 + 250*sin((millis() * 2UL * PI)/500);
+  target = 250 + 250*sin((millis() * 2UL * PI)/2000);
 
   //ステップ
 //  if (millis() - stopwatch > 1000) {
@@ -101,5 +101,7 @@ void loop() {
   
   
   setPressure(target);
-  //delay(10);
+  //ここが長いと安定するが，高周波に対応できなくなる
+  //人工筋の最大動作速度から最大周波数を求め，その周波に追従できる程度の値が最適？
+  delay(30);
 }
