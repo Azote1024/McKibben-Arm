@@ -30,13 +30,15 @@ void setup() {
   Serial.begin(115200);
   delay(1000);
 
-  MsTimer2::set(1, sampling);
-  MsTimer2::start();
+  
 }
 
 void loop() {
   index = 0;
   looptime = millis();
+
+  MsTimer2::set(1, sampling);
+  MsTimer2::start();
   
   PORTB = B00000000 | (PORTD & B11111100);
   while((long)(millis() - looptime) < 200UL) {
@@ -47,7 +49,8 @@ void loop() {
   while((long)(millis() - looptime) < 400UL) {
     delayMicroseconds(1);
   }
-  
+
+
   PORTB = B00000000 | (PORTD & B11111100);
   while((long)(millis() - looptime) < 600UL) {
     delayMicroseconds(1);
@@ -70,16 +73,16 @@ void loop() {
     minor += data[i];
   }
   minor /= 200;
-  Serial.print("min = ");
-  Serial.println(minor);
+  //Serial.print("min = ");
+  //Serial.println(minor);
   
   //データ中の400番から600番までを静定後としてこれを平均
   for (int i=400; i<600; i++) {
       maximum += data[i];
   }
   maximum /= 200;
-  Serial.print("max = ");
-  Serial.println(maximum);
+  //Serial.print("max = ");
+  //Serial.println(maximum);
 
   //----------------//立ち上がり時の時定数を求める//----------------//
 
@@ -93,8 +96,8 @@ void loop() {
       if ( data[i] > th )break;
     }
   }
-  Serial.print("tau_p = ");
-  Serial.println(tau_p);
+  //Serial.print("tau_p = ");
+  //Serial.println(tau_p);
   
   //----------------//立ち下がり時の時定数を求める//----------------//
 
@@ -108,8 +111,8 @@ void loop() {
       if ( data[i] < th )break;
     }
   }
-  Serial.print("tau_n = ");
-  Serial.println(tau_n);
+  //Serial.print("tau_n = ");
+  //Serial.println(tau_n);
   
   while(true);
 }

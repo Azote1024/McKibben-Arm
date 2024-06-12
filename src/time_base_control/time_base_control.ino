@@ -59,26 +59,36 @@ void setup() {
 int openspan = 0;
 double setPressure(int p_target) {
 
+  //-------------------------------------------------------------------------//
   int p_now = map(constrain(analogRead(A5),   513, 779),   513, 779, 0, 500);
-  Serial.print(p_target);
-  Serial.print(",");
-  Serial.println(p_now);
+  //Serial.print(p_target);
+  //Serial.print(",");
+  //Serial.println(p_now);
   
   if(p_now < p_target) {
     //吸気
     openspan = phase_p(p_target, LONG) - phase_p(p_now, LONG);
+    if(openspan > 3) {
     //openspan *= 0.1;
+    if(openspan > 30) openspan = 30;
+    Serial.println(openspan);
     digitalWrite(9, HIGH);
     delay(openspan);
     digitalWrite(9, LOW);
-    
+    delay(10);
+    }
   } else {
     //排気
     openspan = phase_n(p_target, LONG) - phase_n(p_now, LONG);
+    if(openspan > 3) {
     //openspan *= 0.1;
+    if(openspan > 30) openspan = 30;
+    Serial.println(-1*openspan);
     digitalWrite(8, HIGH);
     delay(openspan);
     digitalWrite(8, LOW);
+    delay(10);
+    }
   }
 }
 
@@ -87,7 +97,7 @@ int target = 0;
 void loop() {
 
   //sinカーブ
-  target = 250 + 250*sin((millis() * 2UL * PI)/2000);
+  target = 400 + 100*sin((millis() * 2UL * PI)/500);
 
   //ステップ
 //  if (millis() - stopwatch > 1000) {
@@ -103,5 +113,5 @@ void loop() {
   setPressure(target);
   //ここが長いと安定するが，高周波に対応できなくなる
   //人工筋の最大動作速度から最大周波数を求め，その周波に追従できる程度の値が最適？
-  delay(30);
+  //delay(30);
 }
