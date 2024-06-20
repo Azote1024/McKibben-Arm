@@ -57,5 +57,7 @@ void loop() {
   Serial.print(p_target);
   Serial.print(",");
   Serial.println(p_now);
+
+  //後ろのdelayも影響する
   delay(30);
 }

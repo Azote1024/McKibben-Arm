@@ -49,7 +49,37 @@ int p_target = 0;
 int p_now = 0;
 int openspan = 0;
 void loop() {
+  
 
+  for (int i=0; i<100; i+=1) {
+    digitalWrite(9, HIGH);
+    delay(i);
+    digitalWrite(9, LOW);
+
+    Serial.print(i);
+    Serial.print(",");
+    Serial.println(map(analogRead(A5),   513, 820, 0, 500));
+
+    digitalWrite(8, HIGH);
+    delay(1000);
+    digitalWrite(8, LOW);
+    
+  }
+
+  digitalWrite(9, HIGH);
+  delay(2000);
+  digitalWrite(9, LOW);
+  delay(1000);
+  Serial.print(2000);
+  Serial.print(",");
+  Serial.println(map(analogRead(A5),   513, 820, 0, 500));
+  Serial.println(analogRead(A5));
+  
+  digitalWrite(8, HIGH);
+  delay(1000);
+  digitalWrite(8, LOW);
+
+  while(true){}
 
   //最初にランダムに目標を決める
   p_target = random(0, 500);
@@ -88,11 +118,11 @@ void loop() {
   }
 
   //誤差を出力
-  p_now = map(constrain(analogRead(A5),   514, 808),   514, 808, 0, 500);
+  p_now = map(constrain(analogRead(A5),   514, 790),   514, 790, 0, 500);
 
   Serial.print(p_target);
   Serial.print(",");
-  Serial.println(analogRead(A5));
+  Serial.println(p_now);
   delay(1000);
 
 

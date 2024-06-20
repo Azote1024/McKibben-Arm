@@ -73,16 +73,16 @@ void loop() {
     minor += data[i];
   }
   minor /= 200;
-  //Serial.print("min = ");
-  //Serial.println(minor);
+  Serial.print("min = ");
+  Serial.println(minor);
   
   //データ中の400番から600番までを静定後としてこれを平均
   for (int i=400; i<600; i++) {
       maximum += data[i];
   }
   maximum /= 200;
-  //Serial.print("max = ");
-  //Serial.println(maximum);
+  Serial.print("max = ");
+  Serial.println(maximum);
 
   //----------------//立ち上がり時の時定数を求める//----------------//
 
@@ -96,8 +96,8 @@ void loop() {
       if ( data[i] > th )break;
     }
   }
-  //Serial.print("tau_p = ");
-  //Serial.println(tau_p);
+  Serial.print("tau_p = ");
+  Serial.println(tau_p);
   
   //----------------//立ち下がり時の時定数を求める//----------------//
 
@@ -111,8 +111,8 @@ void loop() {
       if ( data[i] < th )break;
     }
   }
-  //Serial.print("tau_n = ");
-  //Serial.println(tau_n);
+  Serial.print("tau_n = ");
+  Serial.println(tau_n);
   
   while(true);
 }

@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <math.h>
 
+#include<MsTimer2.h>
+
 //sinカーブとかを描く用
 unsigned long startmillis = 0;
 
@@ -37,6 +39,16 @@ double phase_n(double p, bool isLongMuscle) {
   return tau_n_short * temp;
 }
 
+int p_now;
+int p_target;
+
+void dataPrint(){
+  Serial.print(p_target);
+  Serial.print(",");
+  Serial.println(p_now);
+  
+}
+
 void setup() {
   //このプログラムは基本的にUNO向けなので注意
   DDRD = DDRD | B11111100;
@@ -54,13 +66,16 @@ void setup() {
   
   Serial.begin(115200);
   delay(1000);
+
+  MsTimer2::set(1, dataPrint);
+  MsTimer2::start();
 }
 
 int openspan = 0;
 double setPressure(int p_target) {
 
   //-------------------------------------------------------------------------//
-  int p_now = map(constrain(analogRead(A5),   513, 779),   513, 779, 0, 500);
+  p_now = map(constrain(analogRead(A5),   513, 779),   513, 779, 0, 500);
   //Serial.print(p_target);
   //Serial.print(",");
   //Serial.println(p_now);
@@ -69,39 +84,32 @@ double setPressure(int p_target) {
     //吸気
     openspan = phase_p(p_target, LONG) - phase_p(p_now, LONG);
     if(openspan > 0) {
-    //openspan *= 0.1;
+    //openspan *= 0.5;
     if(openspan > 30) openspan = 30;
-    //Serial.println(openspan);
     digitalWrite(9, HIGH);
     delay(openspan);
     digitalWrite(9, LOW);
-    delay(10);
     }
   } else {
     //排気
     openspan = phase_n(p_target, LONG) - phase_n(p_now, LONG);
     if(openspan > 0) {
-    //openspan *= 0.1;
+    //openspan *= 0.5;
     if(openspan > 30) openspan = 30;
-    //Serial.println(-1*openspan);
     digitalWrite(8, HIGH);
     delay(openspan);
     digitalWrite(8, LOW);
-    delay(10);
     }
   }
-
-  Serial.print(p_target);
-  Serial.print(",");
-  Serial.println(p_now);
+  delay(10);
 }
 
 unsigned long stopwatch = millis();
-int p_target = 0;
+
 void loop() {
 
   //sinカーブ
-  p_target = 400 + 100*sin((millis() * 2UL * PI)/2000);
+  p_target = 100 + 100*sin((millis() * 2UL * PI)/2000);
 
   //ステップ
 //  if (millis() - stopwatch > 1000) {
@@ -113,10 +121,6 @@ void loop() {
 //    }
 //  }
   
-  
   setPressure(p_target);
-  
-  //ここが長いと安定するが，高周波に対応できなくなる
-  //人工筋の最大動作速度から最大周波数を求め，その周波に追従できる程度の値が最適？
-  delay(10);
+  //delay(5);
 }
