@@ -19,8 +19,8 @@ double p_min = 0.0;
 
 
 //時定数
-double tau_p_long = 47.0;
-double tau_n_long = 42.0;
+double tau_p_long = 46.0;
+double tau_n_long = 41.0;
 
 double tau_p_short = 60.0;
 double tau_n_short = 60.0;
@@ -28,25 +28,47 @@ double tau_n_short = 60.0;
 
 //内圧が増えていくときの過渡応答グラフから，あるpのときの対応フェーズを返す
 double phase_p(double p, bool isLongMuscle) {
+  if(p_max == p) return 100;
   double temp = log((p_max - p_min)/(p_max - p));
   if(isLongMuscle) return tau_p_long * temp;
   return tau_p_short * temp;
 }
 //内圧が減っていくときの過渡応答グラフから，あるpのときの対応フェーズを返す
 double phase_n(double p, bool isLongMuscle) {
+  if(p_min == p) return 100;
   double temp = log((p_max - p_min)/(p - p_min));
   if(isLongMuscle) return tau_n_long * temp;
   return tau_n_short * temp;
 }
 
-int p_now;
-int p_target;
+volatile int p_now = 0;
+volatile int p_target = 500;
+
+unsigned long stopwatch = 0;
 
 void dataPrint(){
+  //三角波
+//  p_target = millis()*0.1 - stopwatch;
+
+  //sinカーブ
+ p_target = (int)(250.0 + 250.0*sin(((float)millis() * 2.0 * 3.1415)/200.0));
+ //p_target = 0;
+
+//  if(p_target > 500)stopwatch = millis()*0.1;
+
+  //ステップ
+//  if (millis() - stopwatch > 1000) {
+//    stopwatch = millis();
+//    if (p_target == 500) {
+//      p_target = 0;
+//    } else {
+//      p_target = 500;
+//    }
+//  }
+  
   Serial.print(p_target);
   Serial.print(",");
   Serial.println(p_now);
-  
 }
 
 void setup() {
@@ -72,7 +94,8 @@ void setup() {
 }
 
 int openspan = 0;
-double setPressure(int p_target) {
+
+double setPressure() {
 
   //-------------------------------------------------------------------------//
   p_now = map(constrain(analogRead(A5),   513, 779),   513, 779, 0, 500);
@@ -85,7 +108,7 @@ double setPressure(int p_target) {
     openspan = phase_p(p_target, LONG) - phase_p(p_now, LONG);
     if(openspan > 0) {
     //openspan *= 0.5;
-    if(openspan > 30) openspan = 30;
+    if(openspan > 25) openspan = 25;
     digitalWrite(9, HIGH);
     delay(openspan);
     digitalWrite(9, LOW);
@@ -95,32 +118,82 @@ double setPressure(int p_target) {
     openspan = phase_n(p_target, LONG) - phase_n(p_now, LONG);
     if(openspan > 0) {
     //openspan *= 0.5;
-    if(openspan > 30) openspan = 30;
+    if(openspan > 25) openspan = 25;
     digitalWrite(8, HIGH);
     delay(openspan);
     digitalWrite(8, LOW);
     }
   }
-  delay(10);
 }
 
-unsigned long stopwatch = millis();
+double KI = 0.1;
+double setPressure_P() {
+
+  //-------------------------------------------------------------------------//
+  p_now = map(constrain(analogRead(A5),   513, 779),   513, 779, 0, 500);
+  //Serial.print(p_target);
+  //Serial.print(",");
+  //Serial.println(p_now);
+  
+  if(p_now < p_target) {
+    //吸気
+    openspan = (p_target - p_now) * KI;
+    if(openspan > 0) {
+    //openspan *= 0.5;
+    if(openspan > 25) openspan = 25;
+    digitalWrite(9, HIGH);
+    delay(openspan);
+    digitalWrite(9, LOW);
+    }
+  } else {
+    //排気
+    openspan = (p_now - p_target) * KI;
+    if(openspan > 0) {
+    //openspan *= 0.5;
+    if(openspan > 25) openspan = 25;
+    digitalWrite(8, HIGH);
+    delay(openspan);
+    digitalWrite(8, LOW);
+    }
+  }
+}
+
+double setPressure_H() {
+  //-------------------------------------------------------------------------//
+  p_now = map(constrain(analogRead(A5),   513, 779),   513, 779, 0, 500);
+  //Serial.print(p_target);
+  //Serial.print(",");
+  //Serial.println(p_now);
+  
+  if(p_now < p_target) {
+    //吸気
+    if ((p_target - p_now) > 10) openspan = 10;
+    else if ((p_target - p_now) > 50) openspan = 20;
+    else openspan = 0;
+    if(openspan > 0) {
+    //openspan *= 0.5;
+    if(openspan > 25) openspan = 25;
+    digitalWrite(9, HIGH);
+    delay(openspan);
+    digitalWrite(9, LOW);
+    }
+  } else {
+    //排気
+    if ((p_now - p_target) > 10) openspan = 10;
+    else if ((p_now - p_target) > 50) openspan = 20;
+    else openspan = 0;
+    if(openspan > 0) {
+    //openspan *= 0.5;
+    if(openspan > 25) openspan = 25;
+    digitalWrite(8, HIGH);
+    delay(openspan);
+    digitalWrite(8, LOW);
+    }
+  }
+}
+
 
 void loop() {
-
-  //sinカーブ
-  p_target = 100 + 100*sin((millis() * 2UL * PI)/2000);
-
-  //ステップ
-//  if (millis() - stopwatch > 1000) {
-//    stopwatch = millis();
-//    if (target == 400) {
-//      target = 100;
-//    } else {
-//      target = 400;
-//    }
-//  }
-  
-  setPressure(p_target);
-  //delay(5);
+  setPressure();
+  delay(10);
 }

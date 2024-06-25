@@ -33,6 +33,8 @@ int opentime = 0;
 
 const int ms = 1000;
 
+
+unsigned long stopwatch = 0;
 void loop() {
   stopwatch = millis();
   
@@ -40,8 +42,24 @@ void loop() {
 
   target = 250 + 250*sin((millis() * 2UL * PI)/2000);
 
-  Serial.println(pressure);
+  //三角波
+  target = millis()*0.1 - stopwatch;
+  if(target > 500)stopwatch = millis()*0.1;
 
+
+  // ------------------------------------------------------ //
+
+  //誤差を定数倍して開時間を決定する
+  opentime = constrain(abs(target - pressure)*0.2, 0, 30);
+
+  //段階的にduty比決定
+//  if((target - pressure) > 40) opentime = 15;
+//  else if ((target - pressure) > 100) opentime = 30;
+
+  //一定以上の誤差があったら開くだけ
+//  if ((target - pressure) > 100) opentime = 30;
+
+  // ------------------------------------------------------ //
   
   if (pressure > target) {
     digitalWrite(8, 1);
@@ -50,14 +68,13 @@ void loop() {
   else if (pressure < target){
     digitalWrite(8, 0);
     digitalWrite(9, 1);
-    
   }
 
-  opentime = constrain(abs(target - pressure)*0.2, 0, 30);
   delay(opentime);
   
   digitalWrite(8, 0);
   digitalWrite(9, 0);
 
+  Serial.println(pressure);
   if (opentime < 30) delay((stopwatch + 30) - millis());
 }

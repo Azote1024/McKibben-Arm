@@ -52,7 +52,7 @@ void loop() {
 
 
   //最初にランダムに目標を決める
-  p_target = random(0, 500);
+  p_target = random(100, 200);
   
 
   //現在気圧より大きいとき，空気を注入する
@@ -67,9 +67,6 @@ void loop() {
     digitalWrite(9, HIGH);
     delay(openspan);
     digitalWrite(9, LOW);
-    
-    //安定するまで待つ
-    delay(200);
     }
     
   } else {
@@ -81,19 +78,19 @@ void loop() {
     digitalWrite(8, HIGH);
     delay(openspan);
     digitalWrite(8, LOW);
-    
-    //安定するまで待つ
-    delay(200);
     }
   }
+
+  //安定するまで待つ
+  //delay(10);
 
   //誤差を出力
   p_now = map(constrain(analogRead(A5),   514, 808),   514, 808, 0, 500);
 
   Serial.print(p_target);
   Serial.print(",");
-  Serial.println(analogRead(A5));
-  delay(1000);
+  Serial.println(p_now);
+  //delay(100);
 
 
   counter++;
