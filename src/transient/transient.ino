@@ -55,6 +55,8 @@ void loop() {
   while((long)(millis() - looptime) < 600UL) {
     delayMicroseconds(1);
   }
+
+  while(true);
   
   PORTB = B00000001 | (PORTD & B11111100);
   while((long)(millis() - looptime) < 800UL) {

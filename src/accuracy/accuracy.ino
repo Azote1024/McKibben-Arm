@@ -1,6 +1,21 @@
 #include <Arduino.h>
 #include <math.h>
 
+#include <MsTimer2.h>
+
+volatile int p_now = 0;
+volatile int p_target = 0;
+void dataPrint() {
+  p_now = map(analogRead(A5),  518, 823, 0, 500);
+  //p_now = analogRead(A5);
+  Serial.print(p_now);
+  Serial.print(",");
+  Serial.print(p_target);
+  Serial.print(",");
+  Serial.println(PORTB);
+}
+
+
 #define OPEN 1
 #define CLOSE 0
 
@@ -15,6 +30,9 @@ void setup() {
 
   Serial.begin(115200);
   delay(1000);
+
+  MsTimer2::set(10, dataPrint);
+  MsTimer2::start();
 }
 
 //本来はここには供給圧力（タンク圧力）を入れる（今はセンシングしていないのでだめだが）
@@ -23,8 +41,8 @@ double p_min = 0.0;
 
 
 //時定数
-double tau_p_long = 46.0;
-double tau_n_long = 41.0;
+double tau_p_long = 68.9;
+double tau_n_long = 46.1;
 
 double tau_p_short = 60.0;
 double tau_n_short = 60.0;
@@ -44,19 +62,14 @@ double phase_n(double p, bool isLongMuscle) {
 }
 
 
-int counter = 0;
-int p_target = 0;
-int p_now = 0;
+unsigned long counter = 0;
 int openspan = 0;
 void loop() {
 
-
+  counter = millis();
   //最初にランダムに目標を決める
-  p_target = random(100, 200);
   
-
-  //現在気圧より大きいとき，空気を注入する
-  p_now = map(constrain(analogRead(A5),   513, 779),   513, 779, 0, 500);
+  p_target = random(0, 500);
   
   if (p_target > p_now) {
     //吸気
@@ -81,18 +94,10 @@ void loop() {
     }
   }
 
-  //安定するまで待つ
-  //delay(10);
-
-  //誤差を出力
-  p_now = map(constrain(analogRead(A5),   514, 808),   514, 808, 0, 500);
-
-  Serial.print(p_target);
-  Serial.print(",");
-  Serial.println(p_now);
-  //delay(100);
-
-
-  counter++;
-  //if(counter > 100) {while(true);}
+  
+  delay(500);
+//  p_now = map(analogRead(A5),  518, 823, 0, 500);
+//  Serial.println(abs(p_target-p_now));
+  delay(500);
+  
 }
