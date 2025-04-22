@@ -1,2 +1,2 @@
 # McKibben-Arm
-Prototype 2-DOF scalar robot operated by four Mckibben artificial muscles.
+Prototype 2-DOF robot operated by four Mckibben artificial muscles.
