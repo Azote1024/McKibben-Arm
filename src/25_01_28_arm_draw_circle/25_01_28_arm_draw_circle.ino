@@ -8,10 +8,10 @@
 // --------------------------------------------- //
 
 // 関節の目標剛性値[N/mm]
-#define JOINT_K 7020.0f
+#define JOINT_K 4000.0f
 
 // 目標円軌道の半径
-#define CIRCLE_PHI 150.0f
+#define CIRCLE_PHI 100.0f
 
 // 目標円軌道の周期[ms]
 #define CIRCLE_T 5000.0f
